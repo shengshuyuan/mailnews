@@ -4,8 +4,8 @@
     --bg-panel: #0d0d12; /* Very Dark Purple tint */
     
     /* Primary: EVA Purple */
-    --primary-color: #9d50ff; /* Lighter Purple for text/highlights */
-    --primary-dim: #6b4c9a;   /* Base Purple */
+    --primary-color: #b026ff; /* Neon Purple */
+    --primary-dim: #7c3aed;   /* Deep Purple */
     
     /* Secondary: EVA Green */
     --secondary-color: #39ff14; /* Neon Green */
@@ -80,22 +80,26 @@ body {
 
 /* Sidebar */
 .sidebar {
-    background: var(--bg-panel);
+    background: linear-gradient(180deg, rgba(28, 15, 50, 0.6) 0%, var(--bg-panel) 100%);
     border-right: 1px solid var(--border-dim);
     padding: var(--spacing-lg);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 2px 0 20px rgba(107, 76, 154, 0.1);
+    box-shadow: 2px 0 20px rgba(176, 38, 255, 0.15);
+    backdrop-filter: blur(10px);
 }
 
 .brand h1 {
     font-family: var(--font-display);
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: #d8b4fe; /* Lighter text for better contrast with glow */
     letter-spacing: -1px;
     line-height: 1.1;
-    text-shadow: 0 0 10px rgba(157, 80, 255, 0.5);
+    text-shadow: 
+        0 0 5px var(--primary-color),
+        0 0 10px var(--primary-color),
+        0 0 20px rgba(176, 38, 255, 0.5);
     border-left: 4px solid var(--secondary-color);
     padding-left: 10px;
 }
