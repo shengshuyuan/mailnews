@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全球邮箱新闻速览 | EVA-01 MODE</title>
+    <!-- 引入 JetBrains Mono 字体以增强代码/科技感，同时保证可读性 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 移除干扰视觉的 overlay，保留轻微 scanline -->
+    <div class="scanline"></div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="brand">
+                <h1>全球邮箱<br><span>新闻速览</span></h1>
+            </div>
+            <div class="system-status">
+                <p>SYSTEM: <span class="status-online">MAGI-01</span></p>
+                <p>SYNC RATE: <span class="status-secure">400%</span></p>
+                <p>WEEK: <span id="current-date">2025.01.19-01.25</span></p>
+                
+                <!-- Performance Monitor -->
+                <div class="perf-monitor">
+                    <div class="perf-item">
+                        <span class="perf-label">FPS</span>
+                        <span class="perf-value" id="fps-counter">--</span>
+                    </div>
+                    <div class="perf-item">
+                        <span class="perf-label">MEM</span>
+                        <span class="perf-value" id="mem-counter">--</span>
+                    </div>
+                    <div class="perf-item">
+                        <span class="perf-label">PING</span>
+                        <span class="perf-value" id="ping-counter">12ms</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="history-nav">
+                <h3>ARCHIVES [历史档案]</h3>
+                <ul id="history-list">
+                    <!-- History items will be injected here -->
+                </ul>
+            </nav>
+
+            <div class="controls">
+                <button id="generate-btn" class="cyber-btn">
+                    <span class="btn-text">INITIALIZE_SYNC // 启动同步</span>
+                    <span class="btn-glitch"></span>
+                </button>
+                <button id="clear-btn" class="cyber-btn secondary">
+                    <span class="btn-text">PURGE_DATA // 清除缓存</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h2 id="report-title">WAITING FOR PILOT INPUT...</h2>
+                <div class="header-decoration"></div>
+            </header>
+
+            <div id="loading-screen" class="hidden">
+                <div class="loader">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+                <p id="loading-text" class="loading-text">CONNECTING TO MAGI SYSTEM...</p>
+            </div>
+
+            <div id="news-feed" class="news-feed">
+                <!-- News cards will be injected here -->
+                <div class="empty-state">
+                    <p>> NEURAL CONNECTION STANDBY.</p>
+                    <p>> AWAITING SYNCHRONIZATION...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Modal for Confirmation -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="modal-title">WARNING: DATA PURGE</h3>
+            <p class="modal-text">ALL ARCHIVED INTELLIGENCE WILL BE DELETED.<br>THIS ACTION CANNOT BE UNDONE.</p>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="cyber-btn secondary">
+                    <span class="btn-text">ABORT // 取消</span>
+                </button>
+                <button id="modal-confirm" class="cyber-btn danger">
+                    <span class="btn-text">EXECUTE // 确认删除</span>
+                    <span class="btn-glitch"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
