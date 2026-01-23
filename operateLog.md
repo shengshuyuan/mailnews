@@ -1,5 +1,18 @@
 # Operation Log
 
+## [2026-01-24 10:30] 🟡 Feature Update (Enhancements v2)
+- **Scope**: `server.js`, `app.js`, `style.css`, `index.html`
+- **Summary**: Added News Categories, Favorites, Filters, and Screenshot Export.
+- **Details**:
+  - **Backend**: Added `type` and `isFavorite` fields to news structure; Implemented auto-categorization based on keywords.
+  - **Frontend**: 
+    - Implemented Category Tags (Security, Update, Policy, AI, Other).
+    - Implemented Star/Favorite system with LocalStorage persistence.
+    - Added Filter Buttons for categories and favorites.
+    - Integrated `html2canvas` for one-click report screenshot export.
+  - **UI**: Updated Cyberpunk styling for new elements (Tags, Stars, Buttons).
+- **Rollback**: `git checkout HEAD~1` (if git is initialized) or revert file changes manually.
+
 ## [2026-01-23 18:50] 🟡 Feature Update (Infinite Scroll)
 - **Scope**: `server.js`, `app.js`, `style.css`
 - **Summary**: Increased news capacity to 15 items and implemented Infinite Scroll.

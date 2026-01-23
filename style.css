@@ -303,6 +303,203 @@ body {
 .news-card.insight { border-left: 3px solid var(--primary-color); }
 .news-card.phishing { border-left: 3px solid #ff00ff; }
 
+/* News Tag - 分类标签 */
+.news-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.news-tag.security {
+    background: rgba(255, 157, 0, 0.15);
+    color: var(--accent-color);
+    border: 1px solid rgba(255, 157, 0, 0.3);
+    box-shadow: 0 0 8px rgba(255, 157, 0, 0.2);
+}
+
+.news-tag.update {
+    background: rgba(57, 255, 20, 0.15);
+    color: var(--secondary-color);
+    border: 1px solid rgba(57, 255, 20, 0.3);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.2);
+}
+
+.news-tag.policy {
+    background: rgba(176, 38, 255, 0.15);
+    color: var(--primary-color);
+    border: 1px solid rgba(176, 38, 255, 0.3);
+    box-shadow: 0 0 8px rgba(176, 38, 255, 0.2);
+}
+
+.news-tag.ai {
+    background: rgba(0, 191, 255, 0.15);
+    color: #00bfff;
+    border: 1px solid rgba(0, 191, 255, 0.3);
+    box-shadow: 0 0 8px rgba(0, 191, 255, 0.2);
+}
+
+.news-tag.other {
+    background: rgba(136, 136, 170, 0.15);
+    color: var(--text-muted);
+    border: 1px solid rgba(136, 136, 170, 0.3);
+    box-shadow: 0 0 8px rgba(136, 136, 170, 0.1);
+}
+
+/* Star Icon - 星标收藏 */
+.star-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.star-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: transparent;
+    stroke: var(--text-muted);
+    stroke-width: 2;
+    transition: all 0.2s;
+}
+
+.star-icon:hover svg {
+    stroke: var(--accent-color);
+    filter: drop-shadow(0 0 5px rgba(255, 157, 0, 0.5));
+}
+
+.star-icon.active svg {
+    fill: var(--accent-color);
+    stroke: var(--accent-color);
+    filter: drop-shadow(0 0 8px rgba(255, 157, 0, 0.7));
+}
+
+/* Filter Container - 筛选容器 */
+.filter-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: rgba(13, 13, 18, 0.6);
+    border: 1px solid var(--border-dim);
+    border-radius: 4px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: transparent;
+    border: 1px solid var(--border-dim);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn:hover {
+    background: rgba(157, 80, 255, 0.1);
+    border-color: var(--primary-dim);
+    color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(157, 80, 255, 0.4);
+}
+
+.filter-btn.all.active {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+}
+
+.filter-btn.security.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(255, 157, 0, 0.4);
+}
+
+.filter-btn.update.active {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+}
+
+.filter-btn.policy.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(176, 38, 255, 0.4);
+}
+
+.filter-btn.ai.active {
+    background: #00bfff;
+    border-color: #00bfff;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+}
+
+.filter-btn.favorites.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(255, 157, 0, 0.4);
+}
+
+/* Screenshot Button - 截图导出按钮 */
+.screenshot-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    background: rgba(0, 191, 255, 0.1);
+    border: 1px solid #00bfff;
+    color: #00bfff;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.screenshot-btn:hover {
+    background: #00bfff;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.screenshot-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.screenshot-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
 .card-header {
     display: flex;
     justify-content: space-between;

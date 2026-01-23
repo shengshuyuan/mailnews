@@ -6,6 +6,34 @@ const https = require('https'); // Required for API calls
 const PORT = 3000;
 const ZHIPU_API_KEY = "598601b64b514f0e9c4c38958f0d68f7.V1jkoUJ1VxfI3irl";
 
+// Type configuration for news categorization
+const TYPE_CONFIG = {
+    SECURITY: 'security',
+    UPDATE: 'update',
+    INSIGHT: 'other',
+    POLICY: 'policy',
+    AI: 'ai'
+};
+
+// Helper function to generate news type based on title and content keywords
+function generateNewsType(title, content) {
+    const keywords = {
+        security: ['漏洞', '攻击', '泄露', '钓鱼', 'CVE', '安全', '黑客', '恶意', '威胁', 'DDoS', 'LNK', '劫持', 'Quishing'],
+        update: ['更新', '迭代', '升级', '版本', '发布', '推出', 'Beta', '新功能', '涨价', '停止维护'],
+        policy: ['政策', '法规', '合规', '监管', '法案', '罚款'],
+        ai: ['AI', '人工智能', '机器学习', '智能', 'Copilot', '量子', '识别']
+    };
+    
+    // Match by priority (security > ai > update > policy > other)
+    for (const [type, words] of Object.entries(keywords)) {
+        if (words.some(w => title.includes(w) || content.includes(w))) {
+            return type;
+        }
+    }
+    
+    return 'other';
+}
+
 // Helper function to call Zhipu AI
 async function callZhipuAI() {
     return new Promise((resolve, reject) => {
@@ -119,7 +147,9 @@ const NEWS_DB = {
             date: "2025-01-22",
             summary: "SmarterMail 邮件服务器被发现存在严重漏洞 (CVE-2025-1024)，攻击者可绕过身份验证重置管理员密码并执行远程代码。建议立即升级到 Build 9511。",
             category: "SECURITY",
-            link: "https://thehackernews.com/"
+            link: "https://thehackernews.com/",
+            type: generateNewsType("SmarterMail 严重漏洞：身份验证绕过导致 RCE", "SmarterMail 邮件服务器被发现存在严重漏洞 (CVE-2025-1024)，攻击者可绕过身份验证重置管理员密码并执行远程代码。建议立即升级到 Build 9511。"),
+            isFavorite: false
         },
         {
             id: 2,
@@ -128,7 +158,9 @@ const NEWS_DB = {
             date: "2025-01-21",
             summary: "Google 宣布在 Gmail 企业版中默认启用抗量子加密算法，以应对未来的解密威胁。",
             category: "UPDATE",
-            link: "https://blog.google/products/gmail/"
+            link: "https://blog.google/products/gmail/",
+            type: generateNewsType("Gmail 推出量子加密传输层", "Google 宣布在 Gmail 企业版中默认启用抗量子加密算法，以应对未来的解密威胁。"),
+            isFavorite: false
         },
         {
             id: 3,
@@ -137,7 +169,9 @@ const NEWS_DB = {
             date: "2025-01-20",
             summary: "报告显示，利用 AI 生成的钓鱼邮件攻击量同比上升 300%，传统防御手段拦截率下降。",
             category: "INSIGHT",
-            link: "https://new.qq.com/"
+            link: "https://new.qq.com/",
+            type: generateNewsType("腾讯企业邮箱发布 2025 年度安全报告", "报告显示，利用 AI 生成的钓鱼邮件攻击量同比上升 300%，传统防御手段拦截率下降。"),
+            isFavorite: false
         },
         {
             id: 4,
@@ -146,7 +180,9 @@ const NEWS_DB = {
             date: "2025-01-23",
             summary: "微软更新 Outlook Copilot，能够自动识别邮件中的会议邀约、任务指派并自动添加到日历。",
             category: "UPDATE",
-            link: "https://www.theverge.com/"
+            link: "https://www.theverge.com/",
+            type: generateNewsType("Outlook Copilot 新增'意图识别'功能", "微软更新 Outlook Copilot，能够自动识别邮件中的会议邀约、任务指派并自动添加到日历。"),
+            isFavorite: false
         },
         {
             id: 5,
@@ -155,7 +191,9 @@ const NEWS_DB = {
             date: "2025-01-19",
             summary: "新法案要求所有在欧盟运营的邮箱服务商必须提供端到端加密选项，违者将面临巨额罚款。",
             category: "POLICY",
-            link: "https://www.reuters.com/"
+            link: "https://www.reuters.com/",
+            type: generateNewsType("欧盟通过《数字通信隐私法案》修订案", "新法案要求所有在欧盟运营的邮箱服务商必须提供端到端加密选项，违者将面临巨额罚款。"),
+            isFavorite: false
         },
         {
             id: 6,
@@ -164,7 +202,9 @@ const NEWS_DB = {
             date: "2025-01-21",
             summary: "Proton Mail 确认遭受每秒 5TB 的流量攻击，部分用户访问受限，目前正在逐步恢复。",
             category: "SECURITY",
-            link: "https://www.bleepingcomputer.com/"
+            link: "https://www.bleepingcomputer.com/",
+            type: generateNewsType("Proton Mail 遭遇大规模 DDoS 攻击", "Proton Mail 确认遭受每秒 5TB 的流量攻击，部分用户访问受限，目前正在逐步恢复。"),
+            isFavorite: false
         },
         {
             id: 7,
@@ -173,7 +213,9 @@ const NEWS_DB = {
             date: "2025-01-24",
             summary: "网易邮箱宣布支持 Passkeys 通行密钥，用户可通过生物识别直接登录，彻底告别密码泄露风险。",
             category: "UPDATE",
-            link: "https://36kr.com/"
+            link: "https://36kr.com/",
+            type: generateNewsType("网易邮箱推出'无密码'登录新方案", "网易邮箱宣布支持 Passkeys 通行密钥，用户可通过生物识别直接登录，彻底告别密码泄露风险。"),
+            isFavorite: false
         },
         {
             id: 8,
@@ -182,7 +224,9 @@ const NEWS_DB = {
             date: "2025-01-23",
             summary: "知名隐私邮箱服务商 Fastmail 宣布因运营成本上升，将于下月起调整订阅价格。",
             category: "INSIGHT",
-            link: "https://techcrunch.com/"
+            link: "https://techcrunch.com/",
+            type: generateNewsType("Fastmail 宣布全线产品涨价 20%", "知名隐私邮箱服务商 Fastmail 宣布因运营成本上升，将于下月起调整订阅价格。"),
+            isFavorite: false
         },
         {
             id: 9,
@@ -191,7 +235,9 @@ const NEWS_DB = {
             date: "2025-01-22",
             summary: "安全机构发现 Lazarus 组织正在利用伪装成发票的 LNK 文件攻击金融行业的企业邮箱账户。",
             category: "SECURITY",
-            link: "https://www.mandiant.com/"
+            link: "https://www.mandiant.com/",
+            type: generateNewsType("朝鲜黑客组织利用 LNK 文件攻击企业邮箱", "安全机构发现 Lazarus 组织正在利用伪装成发票的 LNK 文件攻击金融行业的企业邮箱账户。"),
+            isFavorite: false
         },
         {
             id: 10,
@@ -200,7 +246,9 @@ const NEWS_DB = {
             date: "2025-01-20",
             summary: "Amazon SES 发布全新的 AI 驱动出站过滤引擎，帮助开发者防止域名信誉受损。",
             category: "UPDATE",
-            link: "https://aws.amazon.com/new/"
+            link: "https://aws.amazon.com/new/",
+            type: generateNewsType("AWS SES 推出 AI 垃圾邮件过滤引擎", "Amazon SES 发布全新的 AI 驱动出站过滤引擎，帮助开发者防止域名信誉受损。"),
+            isFavorite: false
         },
         {
             id: 11,
@@ -209,7 +257,9 @@ const NEWS_DB = {
             date: "2025-01-18",
             summary: "Zoom 宣布将资源集中于视频会议核心业务，正式停止 Zoom Mail 和 Calendar 客户端的开发。",
             category: "INSIGHT",
-            link: "https://blog.zoom.us/"
+            link: "https://blog.zoom.us/",
+            type: generateNewsType("Zoom Mail 客户端正式停止维护", "Zoom 宣布将资源集中于视频会议核心业务，正式停止 Zoom Mail 和 Calendar 客户端的开发。"),
+            isFavorite: false
         },
         {
             id: 12,
@@ -218,7 +268,9 @@ const NEWS_DB = {
             date: "2025-01-21",
             summary: "Quishing (QR 钓鱼) 攻击激增，攻击者将恶意链接嵌入图片二维码中，成功绕过多数文本扫描引擎。",
             category: "SECURITY",
-            link: "https://cofense.com/"
+            link: "https://cofense.com/",
+            type: generateNewsType("钓鱼新变种：利用 QR 码绕过邮件网关", "Quishing (QR 钓鱼) 攻击激增，攻击者将恶意链接嵌入图片二维码中，成功绕过多数文本扫描引擎。"),
+            isFavorite: false
         },
         {
             id: 13,
@@ -227,7 +279,9 @@ const NEWS_DB = {
             date: "2025-01-24",
             summary: "备受期待的 Thunderbird 安卓版终于进入公开 Beta 测试阶段，支持 K-9 Mail 数据无缝迁移。",
             category: "UPDATE",
-            link: "https://blog.thunderbird.net/"
+            link: "https://blog.thunderbird.net/",
+            type: generateNewsType("Thunderbird Supernova 移动版发布 Beta 测试", "备受期待的 Thunderbird 安卓版终于进入公开 Beta 测试阶段，支持 K-9 Mail 数据无缝迁移。"),
+            isFavorite: false
         },
         {
             id: 14,
@@ -236,7 +290,9 @@ const NEWS_DB = {
             date: "2025-01-19",
             summary: "189 邮箱宣布免费用户大附件中转站扩容至 5GB，并延长保存期限至 30 天。",
             category: "UPDATE",
-            link: "https://www.ithome.com/"
+            link: "https://www.ithome.com/",
+            type: generateNewsType("中国电信 189 邮箱升级大附件中转站", "189 邮箱宣布免费用户大附件中转站扩容至 5GB，并延长保存期限至 30 天。"),
+            isFavorite: false
         },
         {
             id: 15,
@@ -245,7 +301,9 @@ const NEWS_DB = {
             date: "2025-01-22",
             summary: "研究人员展示了一种通过注册过期 DNS 服务器域名来劫持企业 MX 记录的新型攻击手法。",
             category: "SECURITY",
-            link: "https://krebsonsecurity.com/"
+            link: "https://krebsonsecurity.com/",
+            type: generateNewsType("黑客利用过期域名劫持企业邮件路由", "研究人员展示了一种通过注册过期 DNS 服务器域名来劫持企业 MX 记录的新型攻击手法。"),
+            isFavorite: false
         }
     ],
     archive: [
@@ -256,7 +314,9 @@ const NEWS_DB = {
             date: "2025-01-10",
             summary: "微软宣布在 Outlook 中集成更强大的 Copilot 功能，可根据简短提示自动撰写专业邮件。",
             category: "UPDATE",
-            link: "#"
+            link: "#",
+            type: generateNewsType("Outlook 推出全新 AI 辅助撰写功能", "微软宣布在 Outlook 中集成更强大的 Copilot 功能，可根据简短提示自动撰写专业邮件。"),
+            isFavorite: false
         },
         {
             id: 102,
@@ -265,7 +325,9 @@ const NEWS_DB = {
             date: "2025-01-12",
             summary: "Yahoo 邮箱在北美地区遭遇约 2 小时的服务中断，目前已恢复正常。",
             category: "OUTAGE",
-            link: "#"
+            link: "#",
+            type: generateNewsType("Yahoo 邮箱遭遇短暂服务中断", "Yahoo 邮箱在北美地区遭遇约 2 小时的服务中断，目前已恢复正常。"),
+            isFavorite: false
         }
     ]
 };

@@ -2,7 +2,9 @@
 class CyberNewsApp {
     constructor() {
         this.storageKey = 'cybermail_nexus_archives';
+        this.favoritesKey = 'cybermail_nexus_favorites';
         this.archives = this.loadArchives();
+        this.favorites = this.loadFavorites();
         this.currentViewId = null;
         this.worker = null;
         
@@ -11,6 +13,7 @@ class CyberNewsApp {
         this.isLoadingMore = false;
         this.hasMore = true;
         this.currentItems = []; // Store accumulated items for the current report
+        this.currentFilter = 'all'; // Track current filter
 
         this.initWorker();
         this.initServiceWorker();
@@ -53,6 +56,7 @@ class CyberNewsApp {
         this.reportTitle = document.getElementById('report-title');
         this.generateBtn = document.getElementById('generate-btn');
         this.clearBtn = document.getElementById('clear-btn');
+        this.screenshotBtn = document.getElementById('screenshot-btn');
         this.loadingScreen = document.getElementById('loading-screen');
         
         // Perf Elements
@@ -69,6 +73,19 @@ class CyberNewsApp {
         // Event Listeners
         this.generateBtn.addEventListener('click', () => this.generateReport());
         this.clearBtn.addEventListener('click', () => this.clearData());
+        this.screenshotBtn.addEventListener('click', () => this.takeScreenshot());
+
+        // Filter Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const type = e.target.dataset.filter;
+                this.filterNews(type);
+                
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+            });
+        });
 
         // Render Initial History
         this.renderHistory();
@@ -111,9 +128,144 @@ class CyberNewsApp {
         return stored ? JSON.parse(stored) : [];
     }
 
+    loadFavorites() {
+        const stored = localStorage.getItem(this.favoritesKey);
+        return stored ? JSON.parse(stored) : [];
+    }
+
     saveArchives() {
         localStorage.setItem(this.storageKey, JSON.stringify(this.archives));
         this.renderHistory();
+    }
+
+    saveFavorites() {
+        localStorage.setItem(this.favoritesKey, JSON.stringify(this.favorites));
+    }
+
+    toggleFavorite(id) {
+        const index = this.favorites.findIndex(f => f.id === id);
+        const card = document.querySelector(`.star-icon[data-id="${id}"]`);
+        
+        if (index === -1) {
+            // Add to favorites
+            // Find the item in currentItems or archives
+            let item = this.currentItems.find(i => i.id === id);
+            
+            // If not in currentItems, search in archives (for when viewing history)
+            if (!item) {
+                for (const archive of this.archives) {
+                    item = archive.items.find(i => i.id === id);
+                    if (item) break;
+                }
+            }
+            
+            if (item) {
+                const favoriteItem = { ...item, isFavorite: true, favoritedAt: new Date().toISOString() };
+                this.favorites.unshift(favoriteItem);
+                if (card) card.classList.add('active');
+            }
+        } else {
+            // Remove from favorites
+            this.favorites.splice(index, 1);
+            if (card) card.classList.remove('active');
+            
+            // If we are currently viewing favorites, remove the card from view
+            if (this.currentFilter === 'favorites') {
+                const newsCard = card.closest('.news-card');
+                if (newsCard) newsCard.remove();
+                
+                if (this.favorites.length === 0) {
+                    this.renderEmptyState("NO FAVORITES FOUND.");
+                }
+            }
+        }
+        
+        this.saveFavorites();
+    }
+
+    filterNews(type) {
+        this.currentFilter = type;
+        this.newsFeed.innerHTML = '';
+        
+        let itemsToShow = [];
+        
+        if (type === 'all') {
+            itemsToShow = this.currentItems;
+        } else if (type === 'favorites') {
+            itemsToShow = this.favorites;
+        } else {
+            itemsToShow = this.currentItems.filter(item => (item.type || 'other') === type);
+        }
+        
+        if (itemsToShow.length > 0) {
+            this.renderNewsItems(itemsToShow);
+        } else {
+            this.renderEmptyState(type === 'favorites' ? "NO FAVORITES YET." : "NO NEWS IN THIS CATEGORY.");
+        }
+
+        // Re-attach sentinel if needed
+        if (type !== 'favorites' && this.hasMore && this.currentViewId === 'live-session') {
+            this.createSentinel();
+        }
+    }
+
+    async takeScreenshot() {
+        if (typeof html2canvas === 'undefined') {
+            alert('Screenshot module not loaded. Please refresh.');
+            return;
+        }
+
+        const btnText = this.screenshotBtn.querySelector('span');
+        const originalText = btnText.innerText;
+        btnText.innerText = "CAPTURING...";
+        this.screenshotBtn.disabled = true;
+
+        try {
+            // Capture the main content
+            const element = document.querySelector('.main-content');
+            
+            // Options for better quality
+            const options = {
+                scale: 2, // Retina
+                backgroundColor: '#050505', // Match body bg
+                useCORS: true,
+                logging: false,
+                onclone: (clonedDoc) => {
+                    // Adjust styles for screenshot if needed
+                    // e.g. hide scrollbars
+                    const content = clonedDoc.querySelector('.main-content');
+                    content.style.overflow = 'visible';
+                    content.style.height = 'auto';
+                    content.style.position = 'absolute';
+                    content.style.top = '0';
+                    content.style.left = '0';
+                    content.style.width = '100%';
+                }
+            };
+
+            const canvas = await html2canvas(element, options);
+            
+            // Create download link
+            const link = document.createElement('a');
+            const date = new Date().toISOString().split('T')[0];
+            link.download = `CyberMail_Report_${date}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            btnText.innerText = "SAVED!";
+            setTimeout(() => {
+                btnText.innerText = originalText;
+                this.screenshotBtn.disabled = false;
+            }, 2000);
+
+        } catch (error) {
+            console.error('Screenshot failed:', error);
+            btnText.innerText = "ERROR";
+            setTimeout(() => {
+                btnText.innerText = originalText;
+                this.screenshotBtn.disabled = false;
+            }, 2000);
+        }
     }
 
     renderHistory() {
@@ -152,6 +304,7 @@ class CyberNewsApp {
                     <span class="card-source">${item.source}</span>
                     <span class="card-date">${item.date}</span>
                 </div>
+                <span class="news-tag ${item.type || 'other'}">${this.getTypeLabel(item.type || 'other')}</span>
                 <h3>${item.title}</h3>
                 <p>${item.summary}</p>
                 <div class="card-footer">
@@ -233,6 +386,14 @@ class CyberNewsApp {
             
             // Render first batch
             this.newsFeed.innerHTML = ''; // Clear skeleton
+            // Apply current filter immediately (defaults to 'all' usually)
+            // But user might have clicked a filter before generating? Unlikely as button disabled.
+            // Reset filter to 'all' on new generation? Or keep it?
+            // User expectation: New report -> probably want to see everything first.
+            this.currentFilter = 'all'; 
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-btn.all').classList.add('active');
+            
             this.renderNewsItems(newItems);
             
             // Setup sentinel for infinite scroll if more data exists
@@ -283,8 +444,15 @@ class CyberNewsApp {
             // Remove old sentinel
             if (sentinel) sentinel.remove();
             
-            // Render new items
-            this.renderNewsItems(newItems);
+            // Render new items based on filter
+            if (this.currentFilter === 'all') {
+                this.renderNewsItems(newItems);
+            } else if (this.currentFilter !== 'favorites') {
+                const filteredNew = newItems.filter(item => (item.type || 'other') === this.currentFilter);
+                if (filteredNew.length > 0) {
+                    this.renderNewsItems(filteredNew);
+                }
+            }
             
             // Re-add sentinel if more
             if (this.hasMore) {
@@ -313,6 +481,9 @@ class CyberNewsApp {
 
     renderNewsItems(items) {
         items.forEach((item, index) => {
+            // Check if item is in favorites
+            const isFav = this.favorites.some(f => f.id === item.id);
+            
             const card = document.createElement('div');
             card.className = `news-card ${item.category.toLowerCase()}`;
             // Staggered animation
@@ -323,6 +494,12 @@ class CyberNewsApp {
                     <span class="card-source">${item.source}</span>
                     <span class="card-date">${item.date}</span>
                 </div>
+                <div class="star-icon ${isFav ? 'active' : ''}" data-id="${item.id}">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+                <span class="news-tag ${item.type || 'other'}">${this.getTypeLabel(item.type || 'other')}</span>
                 <h3>${item.title}</h3>
                 <p>${item.summary}</p>
                 <div class="card-footer">
@@ -332,10 +509,30 @@ class CyberNewsApp {
             `;
             if (item.link && item.link !== '#') {
                 card.style.cursor = 'pointer';
-                card.onclick = () => window.open(item.link, '_blank');
+                card.onclick = (e) => {
+                    if (!e.target.closest('.star-icon')) {
+                        window.open(item.link, '_blank');
+                    }
+                };
             }
+            
+            // Add star click handler
+            const starIcon = card.querySelector('.star-icon');
+            starIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleFavorite(item.id);
+            });
+            
             this.newsFeed.appendChild(card);
         });
+    }
+
+    renderEmptyState(message = "NO DATA AVAILABLE.") {
+        this.newsFeed.innerHTML = `
+            <div class="empty-state">
+                <p>> ${message}</p>
+            </div>
+        `;
     }
 
     saveCurrentSessionToArchive() {
@@ -431,6 +628,17 @@ class CyberNewsApp {
         var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
         var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
         return weekNo;
+    }
+
+    getTypeLabel(type) {
+        const labels = {
+            security: '安全',
+            update: '更新',
+            policy: '政策',
+            ai: 'AI',
+            other: '其他'
+        };
+        return labels[type] || '其他';
     }
 }
 

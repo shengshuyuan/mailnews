@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- html2canvas for Screenshot Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <!-- 移除干扰视觉的 overlay，保留轻微 scanline -->
@@ -56,6 +58,12 @@
                 <button id="clear-btn" class="cyber-btn secondary">
                     <span class="btn-text">PURGE_DATA // 清除缓存</span>
                 </button>
+                <button id="screenshot-btn" class="screenshot-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                    <span>CAPTURE // 截图导出</span>
+                </button>
             </div>
         </aside>
 
@@ -64,6 +72,16 @@
                 <h2 id="report-title">WAITING FOR PILOT INPUT...</h2>
                 <div class="header-decoration"></div>
             </header>
+
+            <div class="filter-container">
+                <button class="filter-btn all active" data-filter="all">全部</button>
+                <button class="filter-btn security" data-filter="security">安全</button>
+                <button class="filter-btn update" data-filter="update">更新</button>
+                <button class="filter-btn policy" data-filter="policy">政策</button>
+                <button class="filter-btn ai" data-filter="ai">AI</button>
+                <button class="filter-btn other" data-filter="other">其他</button>
+                <button class="filter-btn favorites" data-filter="favorites">收藏</button>
+            </div>
 
             <div id="loading-screen" class="hidden">
                 <div class="loader">
