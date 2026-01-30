@@ -3,6 +3,11 @@ class CyberNewsApp {
     constructor() {
         this.storageKey = 'cybermail_nexus_archives';
         this.favoritesKey = 'cybermail_nexus_favorites';
+        this.appVersion = '1.4'; // Version control for data migration: Remove Security items
+        this.versionKey = 'cybermail_nexus_version';
+        
+        this.checkVersionAndCleanup(); // Run cleanup before loading data
+        
         this.archives = this.loadArchives();
         this.favorites = this.loadFavorites();
         this.currentViewId = null;
@@ -19,6 +24,31 @@ class CyberNewsApp {
         this.initServiceWorker();
         this.initUI();
         this.startPerformanceMonitor();
+    }
+
+    checkVersionAndCleanup() {
+        const storedVersion = localStorage.getItem(this.versionKey);
+        if (storedVersion !== this.appVersion) {
+            console.log(`Version mismatch (Old: ${storedVersion}, New: ${this.appVersion}). Cleaning up legacy data...`);
+            // Clear archives as they might contain non-compliant news
+            localStorage.removeItem(this.storageKey);
+            
+            // Filter favorites to remove non-email items (simple heuristic)
+            try {
+                const favs = JSON.parse(localStorage.getItem(this.favoritesKey) || '[]');
+                const cleanFavs = favs.filter(item => {
+                    const text = (item.title + " " + item.summary).toLowerCase();
+                    const isJunk = ['灯会', '旅游', '经济', '半导体', '手机', '漏洞', '攻击', '泄露', '钓鱼', 'cve', '黑客', '垃圾邮件', '拦截', '审计', '鉴权', '认证', '安全'].some(w => text.includes(w));
+                    return !isJunk && item.category !== 'SECURITY';
+                });
+                localStorage.setItem(this.favoritesKey, JSON.stringify(cleanFavs));
+            } catch (e) {
+                localStorage.removeItem(this.favoritesKey);
+            }
+            
+            localStorage.setItem(this.versionKey, this.appVersion);
+            // Reload page to ensure fresh state if needed, but here we just init empty
+        }
     }
 
     initWorker() {
@@ -64,11 +94,17 @@ class CyberNewsApp {
         this.memCounter = document.getElementById('mem-counter');
 
         // Infinite Scroll Observer
+        // Fix: Observe within .main-content as it handles the scrolling
         this.observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && this.hasMore && !this.isLoadingMore && this.currentViewId === 'live-session') {
+                console.log('Sentinel intersected, loading more...');
                 this.loadMoreNews();
             }
-        }, { threshold: 0.5 });
+        }, { 
+            root: document.querySelector('.main-content'),
+            threshold: 0.1,
+            rootMargin: '100px' // Preload before reaching bottom
+        });
 
         // Event Listeners
         this.generateBtn.addEventListener('click', () => this.generateReport());

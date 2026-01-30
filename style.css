@@ -297,6 +297,26 @@ body {
     width: 100%;
 }
 
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-right: 45px; /* Physical isolation for star icon */
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.card-source {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.card-date {
+    opacity: 0.8;
+}
+
 /* Card Categories */
 .news-card.security { border-left: 3px solid var(--accent-color); }
 .news-card.update { border-left: 3px solid var(--secondary-color); }

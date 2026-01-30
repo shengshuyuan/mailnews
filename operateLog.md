@@ -1,5 +1,10 @@
 # Operation Log
 
+## [2026-01-28 14:10] 🟡修改
+- **影响范围**: `server.js`, `app.js`
+- **变更摘要**: 移除安全相关条目并对齐生成提示与缓存清理。
+- **回滚指南**: `git checkout -- server.js app.js` (if git is initialized) or revert file changes manually.
+
 ## [2026-01-24 10:30] 🟡 Feature Update (Enhancements v2)
 - **Scope**: `server.js`, `app.js`, `style.css`, `index.html`
 - **Summary**: Added News Categories, Favorites, Filters, and Screenshot Export.
