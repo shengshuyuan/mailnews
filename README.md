@@ -1,48 +1,49 @@
-# CyberMail Nexus | 邮箱情报枢纽
+# CyberMail Nexus · 邮箱情报看板原型
 
-![Status](https://img.shields.io/badge/Status-Online-brightgreen) ![Tech](https://img.shields.io/badge/Tech-Node.js%20%7C%20WebWorker%20%7C%20PWA-blue)
+CyberMail Nexus 是一个面向邮箱产品研究场景的资讯展示原型：把分散的行业动态整理成可筛选、可回看、可导出的周报界面，探索“收集资讯后如何更容易阅读和归档”的体验。
 
-CyberMail Nexus 是一个赛博朋克风格的邮箱行业情报聚合平台。它通过模拟未来感的终端界面，展示最新的邮箱安全漏洞、行业更新和技术趋势。
+**当前代码使用内置历史样例数据，不是实时新闻监控服务。** 适合学习原生 JavaScript 看板、Web Worker 与周报交互的人，也适合作为接入真实资讯源之前的界面验证原型。
 
-## 🚀 核心特性
+![邮箱资讯样例到周报的演示流程](docs/images/project-overview.svg)
 
-- **赛博朋克 UI**: 沉浸式终端风格，带有 Glitch 效果和扫描线背景。
-- **高性能架构**: 
-  - **Node.js 后端**: 提供 RESTful API (`/api/news`) 数据服务。
-  - **Web Worker**: 独立线程处理数据生成与格式化，确保 UI 零卡顿。
-  - **Service Worker**: 资源缓存与离线支持 (PWA)。
-- **实时监控**: 侧边栏实时显示 FPS、内存占用和网络延迟。
-- **历史归档**: 基于 LocalStorage 的周报历史记录管理。
+*功能流程示意，非界面截图。图中资讯来自内置样例，不代表实时抓取。*
 
-## 🛠️ 技术栈
+## 现在能做什么
 
-- **Backend**: Node.js (Native `http` module, Zero-dependency)
-- **Frontend**: HTML5, CSS3 (CSS Variables, Animations), Vanilla JavaScript (ES6+)
-- **Storage**: LocalStorage
+- 在终端风格界面浏览邮箱行业资讯卡片，按类型筛选。
+- 通过本地 Node.js 接口分页加载内置样例。
+- 使用 Web Worker 整理演示周报，保存浏览器本地历史。
+- 提供报告复制和图片导出交互，以及 Service Worker 缓存逻辑。
 
-## 📦 快速开始
+## 数据与阶段边界
 
-1. **环境要求**: Node.js v14+
-2. **启动服务**:
-   ```bash
-   node server.js
-   ```
-3. **访问**: 打开浏览器访问 [http://localhost:3000](http://localhost:3000)
+- `server.js` 的 `/api/news/generate` 实际返回内置 `REAL_NEWS` 数组的分页结果；其中虽有模型调用函数，但当前生成路由没有调用它。
+- 样例中日期、来源与事实未逐条核验，不能作为当前行业研究结论或新闻事实直接引用。界面里的“生成”和状态动画是原型体验的一部分。
+- 历史归档保存在当前浏览器，不提供团队共享数据库或跨设备同步。
+- `vercel.json` 目前仅配置静态重写，不能据此认定 Node.js API 已经部署。
 
-## 📂 项目结构
+## 本地查看
 
-```
-mailnews/
-├── server.js        # Node.js 后端服务 (API + Static File Server)
-├── app.js           # 前端核心逻辑 (UI, API Calls, Worker Mgmt)
-├── worker.js        # Web Worker (数据处理)
-├── sw.js            # Service Worker (离线缓存)
-├── style.css        # 赛博朋克样式定义
-├── index.html       # 页面入口
-├── news_report.md   # 生成的 Markdown 周报
-└── prd.md           # 产品需求文档
+服务使用 Node.js 内置模块，无需安装 npm 依赖。
+
+**启动前先检查 `server.js` 的配置：当前仓库含有硬编码的第三方 API 凭据，应该在服务商端撤销旧凭据，并在使用模型功能前改为安全的服务端环境配置。不要复制或使用仓库里的凭据。** 当前样例分页不需要调用第三方模型。
+
+```bash
+git clone https://github.com/shengshuyuan/mailnews.git
+cd mailnews
+node server.js
 ```
 
-## 📝 变更日志
+浏览器打开 [http://localhost:3000](http://localhost:3000)。本项目是历史原型，公开部署前还需补充安全审查、真实数据源、事实核验、错误处理与后端部署配置。
 
-查看 [operateLog.md](operateLog.md) 了解详细变更历史。
+## 项目结构
+
+| 文件 | 用途 |
+| --- | --- |
+| `server.js` | 本地 HTTP 服务、静态资源与样例资讯 API |
+| `app.js` | 卡片渲染、分类、历史与导出交互 |
+| `worker.js` | 演示周报整理与模拟计算 |
+| `sw.js` | 浏览器资源缓存 |
+| `index.html` / `style.css` | 页面结构与终端风格样式 |
+| [prd.md](prd.md) | 历史产品设想，包含尚未接入的能力 |
+| [operateLog.md](operateLog.md) | 历史变更记录 |

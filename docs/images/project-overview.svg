@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+<title id="title">mailnews 项目说明图</title>
+<desc id="desc">历史资讯样例的阅读与归档原型。读取内置历史样例；分类浏览与整理；回看周报或导出</desc>
+<rect width="1200" height="400" rx="24" fill="#f6f8fc"/>
+<g font-family="system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="48" y="64" font-size="18" fill="#52627b">mailnews · 项目概览</text>
+<text x="48" y="108" font-size="28" font-weight="700" fill="#15243a">历史资讯样例的阅读与归档原型</text>
+<rect x="48" y="150" width="352" height="154" rx="18" fill="white" stroke="#d7dfed"/>
+<circle cx="84" cy="186" r="18" fill="#e5edff"/>
+<text x="84" y="192" text-anchor="middle" font-size="17" font-weight="700" fill="#345bb8">1</text>
+<text x="72" y="239" font-size="23" font-weight="600" fill="#15243a">读取内置历史样例</text>
+<text x="72" y="276" font-size="17" fill="#596a84">当前不是实时采集</text>
+<path d="M406 227h12m-5-5 5 5-5 5" fill="none" stroke="#8798b3" stroke-width="2"/>
+<rect x="424" y="150" width="352" height="154" rx="18" fill="white" stroke="#d7dfed"/>
+<circle cx="460" cy="186" r="18" fill="#e5edff"/>
+<text x="460" y="192" text-anchor="middle" font-size="17" font-weight="700" fill="#345bb8">2</text>
+<text x="448" y="239" font-size="23" font-weight="600" fill="#15243a">分类浏览与整理</text>
+<text x="448" y="276" font-size="17" fill="#596a84">Web Worker 演示处理</text>
+<path d="M782 227h12m-5-5 5 5-5 5" fill="none" stroke="#8798b3" stroke-width="2"/>
+<rect x="800" y="150" width="352" height="154" rx="18" fill="white" stroke="#d7dfed"/>
+<circle cx="836" cy="186" r="18" fill="#e5edff"/>
+<text x="836" y="192" text-anchor="middle" font-size="17" font-weight="700" fill="#345bb8">3</text>
+<text x="824" y="239" font-size="23" font-weight="600" fill="#15243a">回看周报或导出</text>
+<text x="824" y="276" font-size="17" fill="#596a84">浏览器本地归档</text>
+<text x="48" y="355" font-size="16" fill="#66758c">功能流程示意，非界面截图</text>
+</g></svg>
